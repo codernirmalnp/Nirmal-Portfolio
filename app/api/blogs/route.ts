@@ -118,7 +118,7 @@ import { requireAuth } from '../auth/utils';
 
 export async function POST(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number }).status === 401) return session;
+  if (session instanceof NextResponse) return session;
   try {
     const data: BlogInput = await req.json();
     if (!validateBlogInput(data)) {
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
  */
 export async function PUT(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number }).status === 401) return session;
+  if (session instanceof NextResponse) return session;
   try {
     const data: BlogInput & { id: number; imageUrl: string } = await req.json();
     if (!data.id || !validateBlogInput(data)) {
@@ -197,7 +197,7 @@ export async function PUT(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number }).status === 401) return session;
+  if (session instanceof NextResponse) return session;
   try {
     const { id }: { id: number } = await req.json();
     if (!id) {

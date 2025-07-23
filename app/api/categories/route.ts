@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number })?.status === 401) return session;
+  if (session instanceof NextResponse) return session;
   const data = await req.json();
   if (!validateCategoryInput(data)) {
     return NextResponse.json({ error: 'Invalid input.' }, { status: 400 });
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number })?.status === 401) return session;
+  if (session instanceof NextResponse) return session;
   const data = await req.json();
   if (!validateCategoryInput(data)) {
     return NextResponse.json({ error: 'Invalid input.' }, { status: 400 });
@@ -61,7 +61,7 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number })?.status === 401) return session;
+  if (session instanceof NextResponse) return session;
   const { id } = await req.json();
   await prisma.category.delete({ where: { id } });
   return NextResponse.json({ success: true });

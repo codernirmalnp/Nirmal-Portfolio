@@ -84,7 +84,7 @@ import { requireAuth } from '../auth/utils';
 
 export async function POST(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number })?.status === 401) return session;
+  if (session instanceof NextResponse) return session;
   try {
     const data = await req.json();
     if (!validateProjectInput(data)) {
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number })?.status === 401) return session;
+  if (session instanceof NextResponse) return session;
   try {
     const data = await req.json();
     if (!validateProjectInput(data)) {
@@ -172,7 +172,7 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number })?.status === 401) return session;
+  if (session instanceof NextResponse) return session;
   const { id } = await req.json();
   // Fetch the project to get the imageUrl before deleting
   const project = await prisma.project.findUnique({ where: { id } });

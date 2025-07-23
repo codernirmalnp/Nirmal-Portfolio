@@ -4,7 +4,7 @@ import { s3, DeleteObjectCommand } from '../../../lib/s3Client';
 
 export async function POST(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as { status?: number })?.status === 401) return session;
+  if (session instanceof NextResponse) return session;
   try {
     const { url } = await req.json();
     if (!url) {
