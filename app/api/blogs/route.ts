@@ -1,3 +1,6 @@
+
+// Blog status enum for type-safe assignment
+const BlogStatusEnum = { PUBLISHED: 'PUBLISHED', UNPUBLISHED: 'UNPUBLISHED' } as const;
 // API route for blog CRUD operations with improved readability, error handling, and type safety
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -9,7 +12,18 @@ import { s3, DeleteObjectCommand } from '../../../lib/s3Client';
 
 
 // Helper: Validate blog input (basic example)
-function validateBlogInput(data: any): boolean {
+interface BlogInput {
+  title: string;
+  excerpt: string;
+  content: string;
+  categoryId: string;
+  tagIds: string[];
+  status: string;
+  imageUrl: string;
+  [key: string]: unknown;
+}
+
+function validateBlogInput(data: BlogInput): boolean {
   return (
     typeof data.title === 'string' && data.title.trim().length >= 5 &&
     typeof data.excerpt === 'string' && data.excerpt.trim().length >= 20 &&
@@ -104,29 +118,32 @@ import { requireAuth } from '../auth/utils';
 
 export async function POST(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number }).status === 401) return session;
   try {
-    const data = await req.json();
+    const data: BlogInput = await req.json();
     if (!validateBlogInput(data)) {
       return NextResponse.json({ error: 'Invalid input.' }, { status: 400 });
     }
     // Prepare data for Prisma
     const { id, tagIds, categoryId, title, excerpt, status, ...rest } = data;
     const slug = await generateUniqueSlug(title);
-    const createData: any = {
+    const BlogStatusEnum = { PUBLISHED: 'PUBLISHED', UNPUBLISHED: 'UNPUBLISHED' } as const;
+    const createData = {
       ...rest,
       title,
       slug,
       excerpt,
-      status: status || 'UNPUBLISHED',
-      ...(categoryId ? { categoryId: Number(categoryId) } : {}),
+      status: (status && BlogStatusEnum[status as keyof typeof BlogStatusEnum]) || BlogStatusEnum.UNPUBLISHED,
       ...(tagIds ? { tags: { connect: tagIds.map((tagId: string) => ({ id: Number(tagId) })) } } : {}),
     };
+    if (categoryId) {
+      (createData as any).categoryId = Number(categoryId);
+    }
     const blog = await prisma.blog.create({ data: createData });
     return NextResponse.json(blog);
-  } catch (error) {
-    console.error('Prisma error:', error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
+  } catch (err) {
+    console.error('Prisma error:', err);
+    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
 }
 
@@ -136,27 +153,30 @@ export async function POST(req: NextRequest) {
  */
 export async function PUT(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number }).status === 401) return session;
   try {
-    const data = await req.json();
+    const data: BlogInput & { id: number; imageUrl: string } = await req.json();
     if (!data.id || !validateBlogInput(data)) {
       return NextResponse.json({ error: 'Invalid input.' }, { status: 400 });
     }
     // Fetch the existing blog to compare imageUrl
     const existingBlog = await prisma.blog.findUnique({ where: { id: Number(data.id) } });
     // Prepare data for Prisma
-    const { id, tagIds, categoryId, title, excerpt, imageUrl, ...rest } = data;
-    const slug = await generateUniqueSlug(title, Number(id));
-    const updateData: any = {
+    const { id: updateId, tagIds, categoryId, title, excerpt, imageUrl, ...rest } = data;
+    const slug = await generateUniqueSlug(title, Number(updateId));
+    const updateData = {
       ...rest,
       title,
       slug,
       excerpt,
       imageUrl,
-      ...(categoryId ? { categoryId: Number(categoryId) } : {}),
+      status: (data.status && BlogStatusEnum[data.status as keyof typeof BlogStatusEnum]) || BlogStatusEnum.UNPUBLISHED,
       ...(tagIds ? { tags: { set: tagIds.map((tagId: string) => ({ id: Number(tagId) })) } } : {}),
     };
-    const blog = await prisma.blog.update({ where: { id: Number(id) }, data: updateData });
+    if (categoryId) {
+      (updateData as any).categoryId = Number(categoryId);
+    }
+    const blog = await prisma.blog.update({ where: { id: Number(updateId) }, data: updateData });
     // If imageUrl changed, delete the old image from S3
     if (existingBlog && existingBlog.imageUrl && existingBlog.imageUrl !== imageUrl) {
       const bucket = process.env.AWS_S3_BUCKET!;
@@ -166,7 +186,7 @@ export async function PUT(req: NextRequest) {
       }
     }
     return NextResponse.json(blog);
-  } catch (error) {
+  } catch (err) {
     return NextResponse.json({ error: 'Failed to update blog.' }, { status: 500 });
   }
 }
@@ -177,9 +197,9 @@ export async function PUT(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number }).status === 401) return session;
   try {
-    const { id } = await req.json();
+    const { id }: { id: number } = await req.json();
     if (!id) {
       return NextResponse.json({ error: 'Missing id.' }, { status: 400 });
     }
@@ -194,7 +214,7 @@ export async function DELETE(req: NextRequest) {
     }
     await prisma.blog.delete({ where: { id } });
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (err) {
     return NextResponse.json({ error: 'Failed to delete blog.' }, { status: 500 });
   }
 }

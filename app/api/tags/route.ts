@@ -2,7 +2,12 @@ import { requireAuth } from '../auth/utils';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../lib/prisma';
 
-function validateTagInput(data: any) {
+interface TagInput {
+  name: string;
+  color: string;
+}
+
+function validateTagInput(data: TagInput) {
   return (
     typeof data.name === 'string' && data.name.trim().length >= 2 &&
     typeof data.color === 'string' && /^#[0-9A-F]{6}$/i.test(data.color)
@@ -34,7 +39,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number })?.status === 401) return session;
   const data = await req.json();
   if (!validateTagInput(data)) {
     return NextResponse.json({ error: 'Invalid input.' }, { status: 400 });
@@ -45,7 +50,7 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number })?.status === 401) return session;
   const data = await req.json();
   if (!validateTagInput(data)) {
     return NextResponse.json({ error: 'Invalid input.' }, { status: 400 });
@@ -56,7 +61,7 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number })?.status === 401) return session;
   const { id } = await req.json();
   await prisma.tag.delete({ where: { id } });
   return NextResponse.json({ success: true });

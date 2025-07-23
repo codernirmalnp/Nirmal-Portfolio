@@ -5,7 +5,7 @@ import { requireAuth } from '../auth/utils';
 
 export async function POST(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number })?.status === 401) return session;
   const formData = await req.formData();
   const file = formData.get('file') as File;
   if (!file) {

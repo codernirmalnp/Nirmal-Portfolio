@@ -16,7 +16,7 @@ interface InputFieldProps {
   type?: string;
   placeholder?: string;
   required?: boolean;
-  validation?: any;
+  validation?: Record<string, unknown>;
 }
 
 interface TextAreaFieldProps {

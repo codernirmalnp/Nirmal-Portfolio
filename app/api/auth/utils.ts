@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "./[...nextauth]/route";
+import { authOptions } from "./authOptions"; // Adjust the import path as necessary
 import { NextRequest, NextResponse } from "next/server";
 
 export async function requireAuth(req: NextRequest) {

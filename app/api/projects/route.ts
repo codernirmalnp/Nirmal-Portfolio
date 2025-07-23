@@ -10,12 +10,23 @@ function isValidUrl(url: string) {
     return false;
   }
 }
-function validateProjectInput(data: any): boolean {
+interface ProjectInput {
+  title: string;
+  description: string;
+  tagIds: number[];
+  categoryIds: number[];
+  status: string;
+  projectUrl?: string;
+  githubUrl?: string;
+  imageUrl: string;
+}
+
+function validateProjectInput(data: ProjectInput): boolean {
   return (
     typeof data.title === 'string' && data.title.trim().length >= 3 &&
     typeof data.description === 'string' && data.description.trim().length >= 20 &&
-    Array.isArray(data.tagIds) && data.tagIds.length >= 1 && data.tagIds.every((t: any) => typeof t === 'number') &&
-    Array.isArray(data.categoryIds) && data.categoryIds.length >= 1 && data.categoryIds.every((c: any) => typeof c === 'number') &&
+    Array.isArray(data.tagIds) && data.tagIds.length >= 1 && data.tagIds.every((t: number) => typeof t === 'number') &&
+    Array.isArray(data.categoryIds) && data.categoryIds.length >= 1 && data.categoryIds.every((c: number) => typeof c === 'number') &&
     typeof data.status === 'string' && ['active', 'completed', 'archived'].includes(data.status) &&
     (typeof data.projectUrl === 'undefined' || (typeof data.projectUrl === 'string' && (data.projectUrl === '' || isValidUrl(data.projectUrl)))) &&
     (typeof data.githubUrl === 'undefined' || (typeof data.githubUrl === 'string' && (data.githubUrl === '' || isValidUrl(data.githubUrl)))) &&
@@ -41,8 +52,8 @@ export async function GET(req: NextRequest) {
     });
     if (project) {
       // Map tags and categories to { id, name }
-      const tags = project.tags.map((pt: any) => ({ id: pt.tagId, name: pt.tag?.name }));
-      const categories = project.categories.map((pc: any) => ({ id: pc.categoryId, name: pc.category?.name }));
+      const tags = project.tags.map((pt: { tagId: number; tag?: { name?: string } }) => ({ id: pt.tagId, name: pt.tag?.name }));
+      const categories = project.categories.map((pc: { categoryId: number; category?: { name?: string } }) => ({ id: pc.categoryId, name: pc.category?.name }));
       return NextResponse.json({ project: { ...project, tags, categories } });
     }
     return NextResponse.json({ error: 'Project not found' }, { status: 404 });
@@ -62,10 +73,10 @@ export async function GET(req: NextRequest) {
     prisma.project.count(),
   ]);
   // Map tags and categories for each project
-  const mappedProjects = projects.map((project: any) => ({
+  const mappedProjects = projects.map((project: typeof projects[0]) => ({
     ...project,
-    tags: project.tags.map((pt: any) => ({ id: pt.tagId, name: pt.tag?.name })),
-    categories: project.categories.map((pc: any) => ({ id: pc.categoryId, name: pc.category?.name })),
+    tags: project.tags.map((pt: { tagId: number; tag?: { name?: string } }) => ({ id: pt.tagId, name: pt.tag?.name })),
+    categories: project.categories.map((pc: { categoryId: number; category?: { name?: string } }) => ({ id: pc.categoryId, name: pc.category?.name })),
   }));
   return NextResponse.json({ projects: mappedProjects, total, page, totalPages: Math.ceil(total / limit) });
 }
@@ -73,7 +84,7 @@ import { requireAuth } from '../auth/utils';
 
 export async function POST(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number })?.status === 401) return session;
   try {
     const data = await req.json();
     if (!validateProjectInput(data)) {
@@ -110,7 +121,7 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number })?.status === 401) return session;
   try {
     const data = await req.json();
     if (!validateProjectInput(data)) {
@@ -161,7 +172,7 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const session = await requireAuth(req);
-  if ((session as any).status === 401) return session;
+  if ((session as { status?: number })?.status === 401) return session;
   const { id } = await req.json();
   // Fetch the project to get the imageUrl before deleting
   const project = await prisma.project.findUnique({ where: { id } });

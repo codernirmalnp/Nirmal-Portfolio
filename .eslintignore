@@ -1,0 +1,9 @@
+.next/
+node_modules/
+
+# Ignore generated and build files
+lib/generated/
+prisma/migrations/
+prisma/generated/
+*.js
+// File removed

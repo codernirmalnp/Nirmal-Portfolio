@@ -8,11 +8,11 @@ import { Pagination } from 'swiper/modules';
 import { testimonialData } from '@/lib/siteData';
 
 const Testimonial = () => {
-    const swiperRef = useRef<any>(null);
+    const swiperRef = useRef<SwiperType | null>(null);
 
     useEffect(() => {
-        if (swiperRef.current && swiperRef.current.swiper) {
-            swiperRef.current.swiper.update();
+        if (swiperRef.current) {
+            swiperRef.current.update();
         }
     }, []);
 
@@ -22,7 +22,9 @@ const Testimonial = () => {
             <div className="swiper-testimonial-pagination w-full h-2 bg-themeGradient rounded absolute left-0 bottom-0 z-10"></div>
             <div className="overflow-x-hidden">
                 <Swiper
-                    ref={swiperRef}
+                    onSwiper={(swiper) => {
+                        swiperRef.current = swiper;
+                    }}
                     slidesPerView={1}
                     spaceBetween={40}
                     autoplay={{

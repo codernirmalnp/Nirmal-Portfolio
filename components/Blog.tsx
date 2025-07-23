@@ -12,15 +12,18 @@ import { FaSpinner } from 'react-icons/fa';
 
 const PAGE_SIZE = 6;
 
+
+import type { BlogPost } from '@/types/custom';
+
 interface BlogProps {
-  blogs?: any[];
+  blogs?: BlogPost[];
 }
 
 const Blog: React.FC<BlogProps> = ({ blogs: initialBlogs = [] }) => {
     const prevRef = useRef(null);
     const nextRef = useRef(null);
     const sliderRef = useRef<SwiperType | null>(null);
-    const [blogs, setBlogs] = useState<any[]>(initialBlogs);
+    const [blogs, setBlogs] = useState<BlogPost[]>(initialBlogs);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
@@ -115,7 +118,7 @@ const Blog: React.FC<BlogProps> = ({ blogs: initialBlogs = [] }) => {
                                         {/* Image */}
                                         <Link className="group block relative before:content-[''] before:z-[1] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-themeGradient before:opacity-0 hover:before:opacity-10 before:transition-all before:ease-linear before:duration-100" href={`blog/${item.slug}`}>
                                             <Image
-                                                src={item.imageUrl}
+                                                src={item.imageUrl || ''}
                                                 alt={item.title}
                                                 width={600}
                                                 height={400}

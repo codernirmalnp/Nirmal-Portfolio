@@ -10,8 +10,11 @@ import { FaSpinner } from 'react-icons/fa';
 import { Swiper as SwiperType } from 'swiper';
 import { NavigationOptions } from 'swiper/types';
 
+
+import type { Project, ProjectTag } from '@/types/custom';
+
 interface PortfolioProps {
-  projects: any[];
+  projects: Project[];
 }
 
 const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
@@ -97,7 +100,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
                                                 className="group block relative before:content-[''] before:z-[1] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-themeGradient before:opacity-0 hover:before:opacity-10 before:transition-all before:ease-linear before:duration-100"
                                             >
                                                 <Image
-                                                    src={project.imageUrl}
+                                                    src={project.imageUrl || ''}
                                                     alt={project.title}
                                                     width={600}
                                                     height={400}
@@ -108,7 +111,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
                                         <div className="pt-6">
                                             {/* Categories */}
                                             <ul className="text-white font-outfit font-medium uppercase text-sm tracking-wider">
-                                                {project.tags?.map((category: any, index: number) => (
+                            {project.tags?.map((category: ProjectTag, index: number) => (
                                                     <li
                                                         key={index}
                                                         className={index === 0 ? "list-none inline-block leading-none pr-[4px]" : "list-none inline-block leading-none relative pl-[14px] pr-[4px] before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[5px] before:h-[5px] before:rounded-md before:bg-white/80"}

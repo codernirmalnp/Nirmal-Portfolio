@@ -1,3 +1,4 @@
+// This file has been removed as part of the patch to delete the [slug] dynamic route.
 import { portfolioData } from '@/lib/siteData';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
