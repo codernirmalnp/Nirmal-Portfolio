@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  color String 
+  blogs Blog[]
+  projectTags ProjectTag[]
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  blogs       Blog[]
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  projectCategories ProjectCategory[]
+}
+  
+
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  imageUrl    String   // S3 image URL
+  status      String
+  projectUrl  String?
+  githubUrl   String?
+  categories  ProjectCategory[]
+  tags        ProjectTag[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Blog {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  content     String
+  excerpt     String   // Short description for the blog
+  imageUrl    String   // S3 image URL
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tags        Tag[]
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
+  status      BlogStatus @default(UNPUBLISHED)
+}
+
+enum BlogStatus {
+  PUBLISHED
+  UNPUBLISHED
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+}
+
+model ProjectCategory {
+  projectId   Int
+  categoryId  Int
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  @@id([projectId, categoryId])
+}
+
+model ProjectTag {
+  projectId   Int
+  tagId       Int
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  tag         Tag       @relation(fields: [tagId], references: [id], onDelete: Restrict)
+  @@id([projectId, tagId])
+}
