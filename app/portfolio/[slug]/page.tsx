@@ -3,8 +3,8 @@ import Image from 'next/image';
 import GalleryWrapper from '@/components/GalleryWrapper';
 import Link from 'next/link';
 
-export default async function PortfolioProject({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+export default async function PortfolioProject({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     // Always use an absolute URL for server fetch
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
