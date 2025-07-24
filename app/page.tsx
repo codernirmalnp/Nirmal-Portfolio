@@ -14,8 +14,15 @@ export default async function Home() {
   const baseUrl = `${protocol}://${host.replace(/^https?:\/\//, '')}`;
 
   const blogsRes = await fetch(`${baseUrl}/api/blogs?limit=6`, { cache: 'no-store' });
-  const projectsRes = await fetch(`${baseUrl}/api/projects?limit=6`, { cache: 'no-store' });
+  if (!blogsRes.ok) {
+    throw new Error(`Failed to fetch blogs: ${blogsRes.status}`);
+  }
   const blogsData = await blogsRes.json();
+
+  const projectsRes = await fetch(`${baseUrl}/api/projects?limit=6`, { cache: 'no-store' });
+  if (!projectsRes.ok) {
+    throw new Error(`Failed to fetch projects: ${projectsRes.status}`);
+  }
   const projectsData = await projectsRes.json();
 
   return (

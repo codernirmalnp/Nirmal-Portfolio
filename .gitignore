@@ -40,3 +40,16 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# Prisma
+/prisma/dev.db
+/prisma/dev.sqlite
+/prisma/test.db
+/prisma/test.sqlite
+
+# Do NOT ignore migrations or schema.prisma!
+!/prisma/migrations/
+!/prisma/schema.prisma
+
+# Ignore Prisma Client JS if generated outside node_modules (default is node_modules)
+/prisma/client/
