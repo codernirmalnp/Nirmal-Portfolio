@@ -47,7 +47,7 @@ export const aboutData = {
     mainData: {
         name: "Nirmal Dangi",
         heroAvatar: HeroAvatar,
-        biography: "I'm a tech enthusiast passionate about AI, data engineering, and DevOps. I build smart systems by transforming raw data into insights, developing machine learning models, and deploying scalable infrastructure. I enjoy solving real-world problems through automation, intelligent design, and continuous learning across the data-to-deployment pipeline.",
+        biography: "I'm a tech enthusiast specializing in AI, data engineering, and DevOps. I love building smart systems, automating workflows, and turning data into real-world solutions.",
         projectsDone: "50",
         yearsOfExperience: "4",
         projectSatisfaction: "100%",
@@ -65,16 +65,16 @@ export const aboutData = {
       ],
     connect: [
         {
-            url: '#',
-            bootstrapIcon: 'bi bi-facebook',
+            url: 'https://www.linkedin.com/in/nirmal-dangi-b9231a18b/',
+            bootstrapIcon: 'bi bi-linkedin',
         },
         {
-            url: '#',
+            url: 'https://x.com/iamnirmaldangi',
             bootstrapIcon: 'bi bi-twitter-x',
         },
         {
-            url: '#',
-            bootstrapIcon: 'bi bi-instagram',
+            url: 'https://github.com/codernirmalnp',
+            bootstrapIcon: 'bi bi-github',
         },
     ]
 };
@@ -487,8 +487,8 @@ export const contactData = {
         title: "Contact",
         title2: "Let's",
         title2Span: "Talk",
-        phone: "+123 456 7890",
-        email: "contact@flatheme.net",
+       
+        email: "nirmal.dangi.2024@gmail.com",
     }
 };
 

@@ -20,7 +20,7 @@ const About = () => {
             <div className="w-full lg:w-1/3 lg:order-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6 lg:gap-8">
                 <div>
                     <h6 className="font-outfit font-medium tracking-wider uppercase text-sm text-white mb-2">Biography</h6>
-                    <p className="text-white/70 text-justify leading-relaxed text-lg md:text-xl">{aboutData.mainData.biography}</p>
+                    <p className="text-white/70 leading-relaxed text-lg md:text-xl">{aboutData.mainData.biography}</p>
                 </div>
                 <div>
                     <h6 className="font-outfit font-medium tracking-wider uppercase text-sm text-white mb-2">Skills</h6>

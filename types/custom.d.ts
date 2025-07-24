@@ -23,6 +23,7 @@ export interface Project {
   trending?: boolean;
   imageUrl?: string;
   title?: string;
+  projectUrl?: string;
 }
 
 export interface BlogTag {

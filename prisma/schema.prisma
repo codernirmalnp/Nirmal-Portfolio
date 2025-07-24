@@ -37,6 +37,7 @@ model Category {
 model Project {
   id          Int      @id @default(autoincrement())
   title       String
+  slug        String   @unique
   description String
   imageUrl    String   // S3 image URL
   status      String

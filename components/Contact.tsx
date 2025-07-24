@@ -50,10 +50,7 @@ export default function Contact() {
                             <h6 className="font-outfit font-medium uppercase text-sm tracking-wider text-white mb-2">Email:</h6>
                             <h3 className="font-outfit font-medium text-2xl lg:text-3xl text-white break-all">{contactData.mainData.email}</h3>
                         </div>
-                        <div className="w-full sm:w-1/2 mt-4 sm:mt-0">
-                            <h6 className="font-outfit font-medium uppercase text-sm tracking-wider text-white mb-2">Call:</h6>
-                            <h3 className="font-outfit font-medium text-2xl lg:text-3xl text-white break-all">{contactData.mainData.phone}</h3>
-                        </div>
+                        {/* Removed phone number section */}
                     </div>
                     {/* Contact Form */}
                     <div className="mt-8 lg:text-right">

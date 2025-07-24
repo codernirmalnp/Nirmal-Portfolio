@@ -34,6 +34,12 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <QuickActions />
+        {/* Account Settings */}
+        <div>
+          <Link href="/dashboard/account" className="inline-block mt-6 bg-darkBg hover:bg-black/50 text-white px-4 py-2 rounded-md text-sm font-outfit font-medium border border-white/20 transition-all duration-200">
+            Account Settings
+          </Link>
+        </div>
       </div>
     </DashboardLayout>
   );

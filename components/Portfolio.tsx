@@ -17,6 +17,17 @@ interface PortfolioProps {
   projects: Project[];
 }
 
+const getSlug = (project: Project) => {
+    // Prefer project.slug if it exists, otherwise generate from title
+    // Remove non-alphanumeric, replace spaces with dashes, lowercase
+    if ((project as any).slug) return (project as any).slug;
+    return project.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+};
+
 const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
     const prevRef = useRef<HTMLButtonElement | null>(null);
     const nextRef = useRef<HTMLButtonElement | null>(null);
@@ -94,43 +105,45 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
                                 <SwiperSlide key={idx}>
                                     <div className="group/portfolio-box">
                                         {/* Image */}
-                                        <div className="overflow-hidden relative rounded-2xl">
+                                        <div className="overflow-hidden relative rounded-2xl w-[630px] h-[393px] mx-auto">
                                             <Link
-                                                href={`portfolio/${project.slug}`}
+                                                href={`/portfolio/${getSlug(project)}`}
                                                 className="group block relative before:content-[''] before:z-[1] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-themeGradient before:opacity-0 hover:before:opacity-10 before:transition-all before:ease-linear before:duration-100"
                                             >
                                                 <Image
                                                     src={project.imageUrl || ''}
                                                     alt={project.title}
-                                                    width={600}
-                                                    height={400}
-                                                    className="group-hover:scale-105 transition ease-custom duration-500"
+                                                    width={630}
+                                                    height={393}
+                                                    placeholder="blur"
+                                                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciLz4="
+                                                    className="object-cover w-full h-full group-hover:scale-105 transition ease-custom duration-500"
                                                 />
                                             </Link>
                                         </div>
                                         <div className="pt-6">
                                             {/* Categories */}
                                             <ul className="text-white font-outfit font-medium uppercase text-sm tracking-wider">
-                            {project.tags?.map((category: ProjectTag, index: number) => (
+                                                {project.tags?.map((category: ProjectTag, index: number) => (
                                                     <li
                                                         key={index}
                                                         className={index === 0 ? "list-none inline-block leading-none pr-[4px]" : "list-none inline-block leading-none relative pl-[14px] pr-[4px] before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[5px] before:h-[5px] before:rounded-md before:bg-white/80"}
                                                     >
-                                                        <Link className="inline-block overflow-hidden" href={`portfolio/${project.slug}`}>
+                                                        <a className="inline-block overflow-hidden" href={project.projectUrl} target="_blank" rel="noopener noreferrer">
                                                             <span className="block relative text-transparent before:content-[attr(data-text)] before:absolute before:top-0 before:left-0 before:opacity-100 before:text-white before:transition-all before:ease-out before:duration-200 hover:before:-top-full hover:before:opacity-0 after:content-[attr(data-text)] after:absolute after:top-full after:left-0 after:opacity-0 after:text-white after:transition-all after:ease-out after:duration-200 hover:after:top-0 hover:after:opacity-100" data-text={category.name}>{category.name}</span>
-                                                        </Link>
+                                                        </a>
                                                     </li>
                                                 ))}
                                             </ul>
                                             {/* Caption */}
                                             <div className="mt-2">
                                                 <h2 className="relative font-outfit font-medium text-3xl">
-                                                    <Link className="text-white group-hover/portfolio-box:pl-[44px] transition-all ease-out duration-200" href={`portfolio/${project.slug}`}>
+                                                    <a className="text-white group-hover/portfolio-box:pl-[44px] transition-all ease-out duration-200" href={project.projectUrl} target="_blank" rel="noopener noreferrer">
                                                         <span className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 opacity-0 group-hover/portfolio-box:opacity-100 group-hover/portfolio-box:-translate-x-0 transition duration-100">
                                                             <i className="bi bi-arrow-right"></i>
                                                         </span>
                                                         {project.title}
-                                                    </Link>
+                                                    </a>
                                                 </h2>
                                             </div>
                                         </div>

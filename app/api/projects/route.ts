@@ -34,6 +34,14 @@ function validateProjectInput(data: ProjectInput): boolean {
   );
 }
 
+function slugify(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get('id');
@@ -95,9 +103,12 @@ export async function POST(req: NextRequest) {
       if (!Array.isArray(tagIds) || tagIds.length === 0 || !Array.isArray(categoryIds) || categoryIds.length === 0) {
         return NextResponse.json({ error: 'At least one tag and one category are required.' }, { status: 400 });
       }
+      // Generate slug from title
+      const slug = slugify(rest.title);
       const project = await prisma.project.create({
         data: {
           ...rest,
+          slug,
           tags: {
             create: tagIds.map((tagId: string | number) => ({ tagId: Number(tagId) }))
           },
