@@ -9,7 +9,8 @@ import Hero from "@/components/Hero";
 export default async function Home() {
   // Use absolute URLs for SSR
   const host = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_BASE_URL || 'localhost:3000';
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+  const protocol = isLocalhost ? 'http' : 'https';
   const baseUrl = `${protocol}://${host.replace(/^https?:\/\//, '')}`;
 
   const blogsRes = await fetch(`${baseUrl}/api/blogs?limit=6`, { cache: 'no-store' });

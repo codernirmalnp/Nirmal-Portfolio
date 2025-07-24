@@ -44,7 +44,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const host = (await headers()).get('host');
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const isLocalhost = host && (host.includes('localhost') || host.includes('127.0.0.1'));
+  const protocol = isLocalhost ? 'http' : (process.env.NODE_ENV === 'production' ? 'https' : 'http');
   const baseUrl = `${protocol}://${host}`;
   const res = await fetch(`${baseUrl}/api/blogs/${slug}`);
   let post = null;
