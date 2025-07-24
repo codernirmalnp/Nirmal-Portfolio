@@ -47,7 +47,7 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }: { session: import('next-auth').Session; token: import('next-auth/jwt').JWT }) {
-      if (token) {
+      if (token && session.user) {
         session.user.id = token.id as string;
       }
       return session;
